@@ -10,16 +10,21 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/zalando/gin-oauth2/github"
 )
 
-// const DOCROOT = "/tmp/docs"
-const DOCROOT = "_docs"
-const PORT = "6060"
-var PROTO = os.Getenv("GOLYGLOT_PROTO")
-var HOST = os.Getenv("GOLYGLOT_HOST")
-var SECRET = os.Getenv("GOLYGLOT_SECRET")
-var ALLOWED_TEAMS = os.Getenv("GITHUB_ALLOWED_TEAMS")
+var DOCROOT = getenvOrPanic("GOLYGLOT_DOCROOT")
+var PORT = getenvOrPanic("GOLYGLOT_PORT")
+var USERNAME = getenvOrPanic("GOLYGLOT_USERNAME")
+var PASSWORD = getenvOrPanic("GOLYGLOT_PASSWORD")
+
+// panic if environment variable is not set
+func getenvOrPanic(name string) string {
+	value := os.Getenv(name)
+	if len(value) == 0 {
+		panic(name + " not set")
+	}
+	return value
+}
 
 // Disallow project names from clashing with other endpoints
 func invalid_name(name string) bool{
@@ -125,26 +130,23 @@ func delete_docs(c *gin.Context) {
 	}
 }
 
+func home(c *gin.Context) {
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{})
+}
+
 func main() {
-	redirectURL := PROTO + "://" + HOST + ":" + PORT + "/docs"
-	credFile := "./github.json"
-	scopes :=[]string{"user"}
-	secret := []byte(SECRET)
-	sessionName := "golyglotsession"
-	github.Setup(redirectURL, credFile, scopes, secret)
-
 	router := gin.Default()
-	router.Use(github.Session(sessionName))
-	router.GET("/", github.LoginHandler)
-
-	private := router.Group("/docs")
+	router.LoadHTMLGlob("templates/*")
+	router.GET("/", home)
 
 	// protect these resources
-	// TODO wrap this handler to check github teams membership
-	private.Use(github.Auth())
+	private := router.Group("/docs")
+	private.Use(gin.BasicAuth(gin.Accounts{
+		USERNAME:    PASSWORD,
+	}))
 	// PUT request to upload new docs in tar gz file
 	private.PUT("/:project", put_docs)
-	// DELETE request to kill the project folder
+	// DELETE request to remove the project folder
 	private.DELETE("/:project", delete_docs)
 	// Static server for everything
 	private.StaticFS("/", gin.Dir(DOCROOT, true))
