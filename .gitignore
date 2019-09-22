@@ -16,7 +16,6 @@ vendor/
 
 golyglot
 _docs/
-github.json
 .env
 .idea
 .DS_Store
