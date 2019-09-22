@@ -16,6 +16,8 @@ vendor/
 
 golyglot
 _docs/
+docs/
 .env
 .idea
 .DS_Store
+credentials.json
