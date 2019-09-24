@@ -3,9 +3,7 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
-	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,7 +14,8 @@ import (
 
 var DOCROOT = getenvOrPanic("GOLYGLOT_DOCROOT")
 var PORT = getenvOrPanic("GOLYGLOT_PORT")
-var CREDENTIALS = getenvOrPanic("GOLYGLOT_CREDENTIALS_FILE")
+var USERNAME = getenvOrPanic("GOLYGLOT_USERNAME")
+var PASSWORD = getenvOrPanic("GOLYGLOT_PASSWORD")
 
 // panic if environment variable is not set
 func getenvOrPanic(name string) string {
@@ -28,7 +27,7 @@ func getenvOrPanic(name string) string {
 }
 
 // Disallow project names from clashing with other endpoints
-func invalid_name(name string) bool{
+func invalid_name(name string) bool {
 	switch strings.ToLower(name) {
 	case
 		"login",
@@ -132,21 +131,13 @@ func delete_docs(c *gin.Context) {
 }
 
 func main() {
-	credentialsFile, _ := ioutil.ReadFile(CREDENTIALS)
-	credentials := make(map[string]string)
-	err := json.Unmarshal([]byte(credentialsFile), &credentials)
-
-	if err != nil {
-		panic("unable to read credentials")
-	}
-
 	router := gin.Default()
 
 	// protect these resources
 	private := router.Group("/")
-	if len(credentials) > 0 {
-		private.Use(gin.BasicAuth(credentials))
-	}
+	private.Use(gin.BasicAuth(gin.Accounts{
+		USERNAME: PASSWORD,
+	}))
 	// PUT request to upload new docs in tar gz file
 	private.PUT("/:project", put_docs)
 	// DELETE request to remove the project folder
