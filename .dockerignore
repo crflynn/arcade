@@ -1,0 +1,7 @@
+.git/
+docs/
+vendor/
+.tool-versions
+.gitignore
+Dockerfile
+README.md

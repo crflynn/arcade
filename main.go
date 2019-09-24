@@ -27,7 +27,7 @@ func getenvOrPanic(name string) string {
 }
 
 // Disallow project names from clashing with other endpoints
-func invalid_name(name string) bool{
+func invalid_name(name string) bool {
 	switch strings.ToLower(name) {
 	case
 		"login",
@@ -130,19 +130,13 @@ func delete_docs(c *gin.Context) {
 	}
 }
 
-func home(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{})
-}
-
 func main() {
 	router := gin.Default()
-	router.LoadHTMLGlob("templates/*")
-	router.GET("/", home)
 
 	// protect these resources
-	private := router.Group("/docs")
+	private := router.Group("/")
 	private.Use(gin.BasicAuth(gin.Accounts{
-		USERNAME:    PASSWORD,
+		USERNAME: PASSWORD,
 	}))
 	// PUT request to upload new docs in tar gz file
 	private.PUT("/:project", put_docs)
