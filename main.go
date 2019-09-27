@@ -131,7 +131,7 @@ func delete_docs(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, "Error")
 	} else {
-		c.String(http.StatusOK, "DELETE %s", name)
+		c.String(http.StatusOK, "DELETE %s", name + "/" + version)
 	}
 }
 
