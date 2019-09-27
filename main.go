@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,24 +25,11 @@ func getenvOrPanic(name string) string {
 	return value
 }
 
-// Disallow project names from clashing with other endpoints
-func invalid_name(name string) bool {
-	switch strings.ToLower(name) {
-	case
-		"health":
-		return true
-	}
-	return false
-}
-
 // Unpack the contents of the zip file to the folder
 func put_docs(c *gin.Context) {
 	name := c.Param("project")
 	version := c.Param("version")
-	if invalid_name(name) {
-		c.String(http.StatusBadRequest, "invalid name")
-		return
-	}
+
 	path := filepath.Join(DOCROOT, name)
 	path = filepath.Join(path, version)
 
@@ -117,10 +103,7 @@ func put_docs(c *gin.Context) {
 func delete_docs(c *gin.Context) {
 	name := c.Param("project")
 	version := c.Param("version")
-	if invalid_name(name) {
-		c.String(http.StatusBadRequest, "invalid name")
-		return
-	}
+
 	path := filepath.Join(DOCROOT, name)
 	if version != "" {
 		path = filepath.Join(path, version)
@@ -154,7 +137,7 @@ func main() {
 	private.PUT("/:project/:version", put_docs)
 	// DELETE request to remove the project+versionn docs
 	private.DELETE("/:project/:version", delete_docs)
-	// DELETE request to remoce the entire project
+	// DELETE request to remove the entire project
 	private.DELETE("/:project", delete_docs)
 
 	// Static server for docs

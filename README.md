@@ -7,7 +7,14 @@ To launch the service locally, clone the repo and run
 
 ```bash
 docker build -t arcade .
-docker run -v $(pwd)/docs:/tmp/docs -p 6060:6060 -it arcade
+docker run -p 6060:6060 -it arcade
+```
+
+or using the Dockerhub image
+
+```
+docker pull crflynn/arcade
+docker run -p 6060:6060 -it crflynn/arcade
 ```
 
 To see the home page visit
@@ -25,7 +32,7 @@ docker run -p 6060:6060 \
     -e ARCADE_DOCROOT='/tmp/docs'
     -e ARCADE_USERNAME='admin'
     -e ARCADE_PASSWORD='password'
-    -it arcade
+    -it crflynn/arcade
 ```
 
 To push new documentation, tar the docs contents and submit a PUT request:
