@@ -38,13 +38,17 @@ cd docs/_build/html
 # create a tar file of the contents excluding the top folder
 tar -czf ../myproject.tar.gz .
 cd ..
-curl -u username:password -X PUT 'http://localhost:6060/myproject' --upload-file myproject.tar.gz
+curl -u username:password -X PUT 'http://localhost:6060/docs/myproject/latest' --upload-file myproject.tar.gz
+curl -u username:password -X PUT 'http://localhost:6060/docs/myproject/v1.2.3' --upload-file myproject.tar.gz
 ```
 
 To delete documentation
 
 ```bash
-curl -u username:password -X DELETE 'http://localhost:6060/myproject'
+# delete a single version
+curl -u username:password -X DELETE 'http://localhost:6060/docs/myproject/v1.2.3'
+# delete an entire project
+curl -u username:password -X DELETE 'http://localhost:6060/docs/myproject'
 ```
 
 This will delete the project and its contents

@@ -30,7 +30,6 @@ func getenvOrPanic(name string) string {
 func invalid_name(name string) bool {
 	switch strings.ToLower(name) {
 	case
-		"login",
 		"health":
 		return true
 	}
@@ -40,11 +39,13 @@ func invalid_name(name string) bool {
 // Unpack the contents of the zip file to the folder
 func put_docs(c *gin.Context) {
 	name := c.Param("project")
+	version := c.Param("version")
 	if invalid_name(name) {
 		c.String(http.StatusBadRequest, "invalid name")
 		return
 	}
 	path := filepath.Join(DOCROOT, name)
+	path = filepath.Join(path, version)
 
 	// delete everything
 	err := os.RemoveAll(path)
@@ -115,11 +116,15 @@ func put_docs(c *gin.Context) {
 // Delete the folder at the project name
 func delete_docs(c *gin.Context) {
 	name := c.Param("project")
+	version := c.Param("version")
 	if invalid_name(name) {
 		c.String(http.StatusBadRequest, "invalid name")
 		return
 	}
 	path := filepath.Join(DOCROOT, name)
+	if version != "" {
+		path = filepath.Join(path, version)
+	}
 
 	err := os.RemoveAll(path)
 
@@ -132,17 +137,27 @@ func delete_docs(c *gin.Context) {
 
 func main() {
 	router := gin.Default()
+	router.GET("/health", func(c *gin.Context) {
+		c.String(http.StatusOK, "OK")
+	})
+	router.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/docs")
+	})
 
 	// protect these resources
-	private := router.Group("/")
+	private := router.Group("/docs")
 	private.Use(gin.BasicAuth(gin.Accounts{
 		USERNAME: PASSWORD,
 	}))
+
 	// PUT request to upload new docs in tar gz file
-	private.PUT("/:project", put_docs)
-	// DELETE request to remove the project folder
+	private.PUT("/:project/:version", put_docs)
+	// DELETE request to remove the project+versionn docs
+	private.DELETE("/:project/:version", delete_docs)
+	// DELETE request to remoce the entire project
 	private.DELETE("/:project", delete_docs)
-	// Static server for everything
+
+	// Static server for docs
 	private.StaticFS("/", gin.Dir(DOCROOT, true))
 
 	_ = router.Run(":" + PORT)
