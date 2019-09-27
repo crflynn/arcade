@@ -27,7 +27,7 @@ docker run -p 6060:6060 \
     -it golyglot
 ```
 
-To push new documentation, tar the docs contents and submit a PUT request to
+To push new documentation, tar the docs contents and submit a PUT request:
 
 ```bash
 # Navigate into the docs build directory (where index.html is).
@@ -50,8 +50,3 @@ curl -u username:password -X DELETE 'http://localhost:6060/docs/myproject/v1.2.3
 # delete an entire project
 curl -u username:password -X DELETE 'http://localhost:6060/docs/myproject'
 ```
-
-This will delete the project and its contents
-
-
-
