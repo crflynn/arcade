@@ -1,4 +1,4 @@
-module github.com/crflynn/golyglot
+module github.com/crflynn/arcade
 
 go 1.13
 

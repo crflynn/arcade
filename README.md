@@ -1,12 +1,13 @@
-# golyglot
+# arcade
 
-Golyglot is a hosting service for publishing static software documentation (sphinx, exdoc, cratedocs) from multiple languages.
+`arcade` is a basic web service written in Go for publishing static software documentation (sphinx, exdoc, cratedocs) from multiple projects with multiple versions across multiple languages. The service is meant to be used by private teams and is secured by basic auth.
+
 
 To launch the service locally, clone the repo and run
 
 ```bash
-docker build -t golyglot .
-docker run -v $(pwd)/docs:/tmp/docs -p 6060:6060 -it golyglot
+docker build -t arcade .
+docker run -v $(pwd)/docs:/tmp/docs -p 6060:6060 -it arcade
 ```
 
 To see the home page visit
@@ -20,11 +21,11 @@ To override the default environment variables use:
 
 ```bash
 docker run -p 6060:6060 \
-    -e GOLYGLOT_PORT='6060'
-    -e GOLYGLOT_DOCROOT='/tmp/docs'
-    -e GOLYGLOT_USERNAME='admin'
-    -e GOLYGLOT_PASSWORD='password'
-    -it golyglot
+    -e ARCADE_PORT='6060'
+    -e ARCADE_DOCROOT='/tmp/docs'
+    -e ARCADE_USERNAME='admin'
+    -e ARCADE_PASSWORD='password'
+    -it arcade
 ```
 
 To push new documentation, tar the docs contents and submit a PUT request:

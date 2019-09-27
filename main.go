@@ -12,10 +12,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var DOCROOT = getenvOrPanic("GOLYGLOT_DOCROOT")
-var PORT = getenvOrPanic("GOLYGLOT_PORT")
-var USERNAME = getenvOrPanic("GOLYGLOT_USERNAME")
-var PASSWORD = getenvOrPanic("GOLYGLOT_PASSWORD")
+var DOCROOT = getenvOrPanic("ARCADE_DOCROOT")
+var PORT = getenvOrPanic("ARCADE_PORT")
+var USERNAME = getenvOrPanic("ARCADE_USERNAME")
+var PASSWORD = getenvOrPanic("ARCADE_PASSWORD")
 
 // panic if environment variable is not set
 func getenvOrPanic(name string) string {
