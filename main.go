@@ -72,7 +72,7 @@ func put_docs(c *gin.Context) {
 		switch {
 		// done if EOF
 		case err == io.EOF:
-			c.String(http.StatusOK, "PUT %s", name)
+			c.String(http.StatusOK, "PUT %s", name + "/" + version)
 			return
 		case err != nil:
 			c.String(http.StatusBadRequest, "error reading")
