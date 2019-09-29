@@ -1,5 +1,7 @@
 # arcade
 
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/crflynn/arcade)](https://hub.docker.com/r/crflynn/arcade)
+
 `arcade` is a basic web service written in Go for publishing static software documentation (sphinx, exdoc, cratedocs) from multiple projects with multiple versions across multiple languages. The service is meant to be used by private teams and is secured by basic auth.
 
 
