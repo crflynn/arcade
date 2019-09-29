@@ -28,10 +28,10 @@ To override the default environment variables use:
 
 ```bash
 docker run -p 6060:6060 \
-    -e ARCADE_PORT='6060'
-    -e ARCADE_DOCROOT='/tmp/docs'
-    -e ARCADE_USERNAME='admin'
-    -e ARCADE_PASSWORD='password'
+    -e ARCADE_PORT='6060' \
+    -e ARCADE_DOCROOT='/tmp/docs' \
+    -e ARCADE_USERNAME='admin' \
+    -e ARCADE_PASSWORD='password' \
     -it crflynn/arcade
 ```
 
