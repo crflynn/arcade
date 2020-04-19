@@ -13,8 +13,8 @@ import (
 
 var DOCROOT = getenvOrPanic("ARCADE_DOCROOT")
 var PORT = getenvOrPanic("ARCADE_PORT")
-var USERNAME = getenvOrPanic("ARCADE_USERNAME")
-var PASSWORD = getenvOrPanic("ARCADE_PASSWORD")
+var USERNAME = os.Getenv("ARCADE_USERNAME")
+var PASSWORD = os.Getenv("ARCADE_PASSWORD")
 
 // panic if environment variable is not set
 func getenvOrPanic(name string) string {
@@ -26,7 +26,7 @@ func getenvOrPanic(name string) string {
 }
 
 // Unpack the contents of the zip file to the folder
-func put_docs(c *gin.Context) {
+func putDocs(c *gin.Context) {
 	name := c.Param("project")
 	version := c.Param("version")
 
@@ -58,7 +58,7 @@ func put_docs(c *gin.Context) {
 		switch {
 		// done if EOF
 		case err == io.EOF:
-			c.String(http.StatusOK, "PUT %s", name + "/" + version)
+			c.String(http.StatusOK, "PUT %s", name+"/"+version)
 			return
 		case err != nil:
 			c.String(http.StatusBadRequest, "error reading")
@@ -100,7 +100,7 @@ func put_docs(c *gin.Context) {
 }
 
 // Delete the folder at the project name
-func delete_docs(c *gin.Context) {
+func deleteDocs(c *gin.Context) {
 	name := c.Param("project")
 	version := c.Param("version")
 
@@ -114,7 +114,7 @@ func delete_docs(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, "Error")
 	} else {
-		c.String(http.StatusOK, "DELETE %s", name + "/" + version)
+		c.String(http.StatusOK, "DELETE %s", name+"/"+version)
 	}
 }
 
@@ -127,18 +127,20 @@ func main() {
 		c.Redirect(http.StatusMovedPermanently, "/docs")
 	})
 
-	// protect these resources
+	// optionally protected resources
 	private := router.Group("/docs")
-	private.Use(gin.BasicAuth(gin.Accounts{
-		USERNAME: PASSWORD,
-	}))
+	if USERNAME != "" {
+		private.Use(gin.BasicAuth(gin.Accounts{
+			USERNAME: PASSWORD,
+		}))
+	}
 
 	// PUT request to upload new docs in tar gz file
-	private.PUT("/:project/:version", put_docs)
-	// DELETE request to remove the project+versionn docs
-	private.DELETE("/:project/:version", delete_docs)
+	private.PUT("/:project/:version", putDocs)
+	// DELETE request to remove the project+version docs
+	private.DELETE("/:project/:version", deleteDocs)
 	// DELETE request to remove the entire project
-	private.DELETE("/:project", delete_docs)
+	private.DELETE("/:project", deleteDocs)
 
 	// Static server for docs
 	private.StaticFS("/", gin.Dir(DOCROOT, true))

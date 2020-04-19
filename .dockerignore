@@ -3,5 +3,7 @@ docs/
 vendor/
 .tool-versions
 .gitignore
+docker-compose.yml
 Dockerfile
+Makefile
 README.md
