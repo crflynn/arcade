@@ -14,10 +14,12 @@
 # Dependency directories (remove the comment below to include it)
 vendor/
 
-arcade
-_docs/
-docs/
-.env
-.idea
+# ignore docs except example
+docs/*
+!docs/example/
+
+# intellij
+.idea/
+
+# macosx
 .DS_Store
-credentials.json
